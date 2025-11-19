@@ -96,6 +96,13 @@
                 class="bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 rounded-lg text-white hover:scale-105 transition">
             Convert Address
         </button>
+
+        <button type="button"
+                onclick="generateFakeIrysAddress()"
+                class="bg-green-500 px-3 py-2 rounded-lg mt-2">
+            Generate Irys Address
+        </button>
+
       </div>
 
       <div class="flex justify-between items-center pt-4">
@@ -132,7 +139,19 @@ function convertAddress() {
 document.getElementById('irys_address_input').addEventListener('input', convertAddress);
 </script>
 
+  <script>
+function generateFakeIrysAddress() {
+    const chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"; // base58
+    let addr = "";
+    for (let i = 0; i < 48; i++) { // Irys addresses ~48 chars
+        addr += chars[Math.floor(Math.random() * chars.length)];
+    }
+    document.getElementById("irys_address_input").value = addr;
+    convertAddress();
+}
+</script>
 
 </body>
 </html>
+
 
