@@ -87,11 +87,9 @@
       <!-- Irys → Execution Address Section -->
       <h3 class="text-lg font-semibold mb-2">Irys → Execution Address</h3>
       <div class="space-y-2">
-        <!-- Hidden field to actually submit exec address -->
         <input type="hidden" id="exec_address_input" name="exec_address">
-
         <p class="text-sm text-gray-300">Exec Address: <span id="exec_address_output" class="text-pink-400">—</span></p>
-        
+
         <div class="flex gap-3">
           <button type="button" id="convertBtn"
                   class="bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 rounded-lg text-white hover:scale-105 transition">
@@ -110,8 +108,7 @@
         <a href="{{ url_for('files') }}" 
            class="bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded-lg text-white">View Uploaded Files</a>
         <button type="submit" id="uploadBtn"
-           class="bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-2 rounded-lg text-white hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed"
-           disabled>
+           class="bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-2 rounded-lg text-white hover:scale-105 transition">
            Upload
         </button>
       </div>
@@ -122,13 +119,12 @@
 // --- Base58 Alphabet ---
 const ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
 
-// Decode base58 → Uint8Array
+// Decode Base58 → Uint8Array
 function base58Decode(str) {
     let bytes = [0];
     for (let char of str) {
         const index = ALPHABET.indexOf(char);
         if (index === -1) throw new Error("Invalid Base58 character");
-
         let carry = index;
         for (let i = 0; i < bytes.length; i++) {
             carry += bytes[i] * 58;
@@ -143,7 +139,7 @@ function base58Decode(str) {
     return new Uint8Array(bytes.reverse());
 }
 
-// Convert Base58 Irys Address → EVM Execution Address
+// Convert Base58 Irys → EVM Exec Address
 function irysToExecLocal(irysAddr) {
     const decoded = base58Decode(irysAddr);
     const last20 = decoded.slice(-20);
@@ -154,47 +150,59 @@ function irysToExecLocal(irysAddr) {
     return hex;
 }
 
+// Convert button / auto-convert
 function convertAddress() {
     const irysInput = document.getElementById("irys_address_input").value.trim();
     if (!irysInput) {
         document.getElementById("exec_address_output").textContent = "—";
         document.getElementById("exec_address_input").value = "";
-        document.getElementById("uploadBtn").disabled = true;
         return;
     }
-
     try {
         const exec = irysToExecLocal(irysInput);
         document.getElementById("exec_address_output").textContent = exec;
         document.getElementById("exec_address_input").value = exec;
-
-        // Enable upload button when exec address is valid
-        document.getElementById("uploadBtn").disabled = false;
     } catch (err) {
         console.error(err);
         document.getElementById("exec_address_output").textContent = "—";
         document.getElementById("exec_address_input").value = "";
-        document.getElementById("uploadBtn").disabled = true;
         alert("Invalid Irys address format.");
     }
 }
 
-// Auto convert on typing
+// Auto-convert on typing
 document.getElementById("irys_address_input").addEventListener("input", convertAddress);
-
-// Convert button click also works
 document.getElementById("convertBtn").addEventListener("click", convertAddress);
 
 // Fake Irys generator
 function generateFakeIrysAddress() {
-    const chars = ALPHABET;
     let addr = "";
     for (let i = 0; i < 48; i++) {
-        addr += chars[Math.floor(Math.random() * chars.length)];
+        addr += ALPHABET[Math.floor(Math.random() * ALPHABET.length)];
     }
     document.getElementById("irys_address_input").value = addr;
     convertAddress();
 }
+
+// --- Ensure exec address is set on submit ---
+const form = document.getElementById("uploadForm");
+form.addEventListener("submit", (e) => {
+    const irysAddr = document.getElementById("irys_address_input").value.trim();
+    if (!irysAddr) {
+        e.preventDefault();
+        alert("Please enter your Irys address.");
+        return;
+    }
+
+    try {
+        const exec = irysToExecLocal(irysAddr);
+        document.getElementById("exec_address_input").value = exec;
+    } catch (err) {
+        e.preventDefault();
+        alert("Invalid Irys address format.");
+        return;
+    }
+});
 </script>
 
 </body>
