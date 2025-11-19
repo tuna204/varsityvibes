@@ -38,6 +38,10 @@ conn.close()
 def generate_tx_id():
     return "devnet_" + ''.join(random.choices(string.ascii_lowercase + string.digits, k=16))
 
+@app.route("/")
+def home():
+    return render_template("loading.html")
+
 # --- Upload Route ---
 @app.route("/", methods=["GET", "POST"])
 def upload_file():
@@ -107,5 +111,6 @@ def download(filename):
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
+
 
 
