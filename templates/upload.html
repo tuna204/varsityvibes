@@ -109,27 +109,30 @@
     </form>
   </div>
 
-<script type="module">
-  import { utils } from "https://cdn.jsdelivr.net/npm/@irys/js/+esm";
-
-  async function convertAddress() {
+<script src="https://cdn.jsdelivr.net/npm/@irys/js/dist/irys.umd.min.js"></script>
+<script>
+function convertAddress() {
     const irysAddress = document.getElementById('irys_address_input').value.trim();
     if (!irysAddress) {
-      alert('Please enter an Irys address.');
-      return;
+        alert('Please enter an Irys address.');
+        return;
     }
-
     try {
-      const execAddress = utils.irysToExec(irysAddress);
-      // Update both visible span and hidden input for submission
-      document.getElementById('exec_address_output').textContent = execAddress;
-      document.getElementById('exec_address_input').value = execAddress;
+        // Using the global `Irys` object from the UMD build
+        const execAddress = Irys.utils.irysToExec(irysAddress);
+        document.getElementById('exec_address_output').textContent = execAddress;
+        document.getElementById('exec_address_input').value = execAddress;
     } catch (error) {
-      console.error(error);
-      alert('Invalid address format');
+        console.error(error);
+        alert('Invalid address format');
     }
-  }
+}
+
+// Auto-convert as user types
+document.getElementById('irys_address_input').addEventListener('input', convertAddress);
 </script>
+
 
 </body>
 </html>
+
