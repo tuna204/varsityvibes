@@ -34,9 +34,12 @@
       border-radius: 0.5rem;
       cursor: pointer;
     }
+    .disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
   </style>
 </head>
-
 <body class="text-white flex flex-col items-center py-10">
 
   <h1 class="text-4xl font-bold mb-8 bg-gradient-to-r from-pink-400 to-blue-400 text-transparent bg-clip-text">
@@ -58,7 +61,7 @@
       {% endif %}
     {% endwith %}
 
-    <form method="POST" enctype="multipart/form-data" class="space-y-4">
+    <form id="uploadForm" method="POST" enctype="multipart/form-data" class="space-y-4">
       <div>
         <label class="block text-sm mb-1">File:</label>
         <input type="file" name="file" required>
@@ -71,7 +74,7 @@
 
       <div>
         <label class="block text-sm mb-1">Irys Address:</label>
-        <input type="text" name="irys_address" placeholder="Enter Irys address" required>
+        <input type="text" id="irys_address_input" placeholder="Enter Irys address" required>
       </div>
 
       <div>
@@ -84,32 +87,31 @@
       <!-- Irys → Execution Address Section -->
       <h3 class="text-lg font-semibold mb-2">Irys → Execution Address</h3>
       <div class="space-y-2">
-        <input type="text" id="irys_address_input" placeholder="Enter Irys address"
-               class="w-full bg-white/10 border border-gray-400 text-white px-3 py-2 rounded-lg" required>
-        
         <!-- Hidden field to actually submit exec address -->
         <input type="hidden" id="exec_address_input" name="exec_address">
 
         <p class="text-sm text-gray-300">Exec Address: <span id="exec_address_output" class="text-pink-400">—</span></p>
         
-        <button type="button" onclick="convertAddress()" 
-                class="bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 rounded-lg text-white hover:scale-105 transition">
-            Convert Address
-        </button>
+        <div class="flex gap-3">
+          <button type="button" id="convertBtn"
+                  class="bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 rounded-lg text-white hover:scale-105 transition">
+              Convert Address
+          </button>
 
-        <button type="button"
-                onclick="generateFakeIrysAddress()"
-                class="bg-green-500 px-3 py-2 rounded-lg mt-2">
-            Generate Irys Address
-        </button>
-
+          <button type="button"
+                  onclick="generateFakeIrysAddress()"
+                  class="bg-green-500 px-3 py-2 rounded-lg">
+              Generate Irys Address
+          </button>
+        </div>
       </div>
 
       <div class="flex justify-between items-center pt-4">
         <a href="{{ url_for('files') }}" 
            class="bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded-lg text-white">View Uploaded Files</a>
-        <button type="submit" 
-           class="bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-2 rounded-lg text-white hover:scale-105 transition">
+        <button type="submit" id="uploadBtn"
+           class="bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-2 rounded-lg text-white hover:scale-105 transition disabled:opacity-50 disabled:cursor-not-allowed"
+           disabled>
            Upload
         </button>
       </div>
@@ -144,10 +146,7 @@ function base58Decode(str) {
 // Convert Base58 Irys Address → EVM Execution Address
 function irysToExecLocal(irysAddr) {
     const decoded = base58Decode(irysAddr);
-
-    // Take the last 20 bytes (EVM style)
     const last20 = decoded.slice(-20);
-
     let hex = "0x";
     for (const byte of last20) {
         hex += byte.toString(16).padStart(2, "0");
@@ -156,34 +155,41 @@ function irysToExecLocal(irysAddr) {
 }
 
 function convertAddress() {
-    const irysAddress = document.getElementById("irys_address_input").value.trim();
-    if (!irysAddress) {
-        alert("Please enter an Irys address.");
+    const irysInput = document.getElementById("irys_address_input").value.trim();
+    if (!irysInput) {
+        document.getElementById("exec_address_output").textContent = "—";
+        document.getElementById("exec_address_input").value = "";
+        document.getElementById("uploadBtn").disabled = true;
         return;
     }
 
     try {
-        const exec = irysToExecLocal(irysAddress);
+        const exec = irysToExecLocal(irysInput);
         document.getElementById("exec_address_output").textContent = exec;
         document.getElementById("exec_address_input").value = exec;
 
+        // Enable upload button when exec address is valid
+        document.getElementById("uploadBtn").disabled = false;
     } catch (err) {
         console.error(err);
+        document.getElementById("exec_address_output").textContent = "—";
+        document.getElementById("exec_address_input").value = "";
+        document.getElementById("uploadBtn").disabled = true;
         alert("Invalid Irys address format.");
     }
 }
 
-// Auto convert when typing
+// Auto convert on typing
 document.getElementById("irys_address_input").addEventListener("input", convertAddress);
 
-// Fake Irys generator still works fine
-</script>
+// Convert button click also works
+document.getElementById("convertBtn").addEventListener("click", convertAddress);
 
-  <script>
+// Fake Irys generator
 function generateFakeIrysAddress() {
-    const chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"; // base58
+    const chars = ALPHABET;
     let addr = "";
-    for (let i = 0; i < 48; i++) { // Irys addresses ~48 chars
+    for (let i = 0; i < 48; i++) {
         addr += chars[Math.floor(Math.random() * chars.length)];
     }
     document.getElementById("irys_address_input").value = addr;
@@ -193,7 +199,3 @@ function generateFakeIrysAddress() {
 
 </body>
 </html>
-
-
-
-
