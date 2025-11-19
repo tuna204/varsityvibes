@@ -116,42 +116,72 @@
     </form>
   </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@irys/js/dist/irys.umd.min.js"></script>
 <script>
+// --- Base58 Alphabet ---
+const ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+
+// Decode base58 → Uint8Array
+function base58Decode(str) {
+    let bytes = [0];
+    for (let char of str) {
+        const index = ALPHABET.indexOf(char);
+        if (index === -1) throw new Error("Invalid Base58 character");
+
+        let carry = index;
+        for (let i = 0; i < bytes.length; i++) {
+            carry += bytes[i] * 58;
+            bytes[i] = carry % 256;
+            carry = Math.floor(carry / 256);
+        }
+        while (carry > 0) {
+            bytes.push(carry % 256);
+            carry = Math.floor(carry / 256);
+        }
+    }
+    return new Uint8Array(bytes.reverse());
+}
+
+// Convert Base58 Irys Address → EVM Execution Address
+function irysToExecLocal(irysAddr) {
+    const decoded = base58Decode(irysAddr);
+
+    // Take the last 20 bytes (EVM style)
+    const last20 = decoded.slice(-20);
+
+    let hex = "0x";
+    for (const byte of last20) {
+        hex += byte.toString(16).padStart(2, "0");
+    }
+    return hex;
+}
+
 function convertAddress() {
-    const irysAddress = document.getElementById('irys_address_input').value.trim();
+    const irysAddress = document.getElementById("irys_address_input").value.trim();
     if (!irysAddress) {
-        alert('Please enter an Irys address.');
+        alert("Please enter an Irys address.");
         return;
     }
+
     try {
-        // Using the global `Irys` object from the UMD build
-        const execAddress = Irys.utils.irysToExec(irysAddress);
-        document.getElementById('exec_address_output').textContent = execAddress;
-        document.getElementById('exec_address_input').value = execAddress;
-    } catch (error) {
-        console.error(error);
-        alert('Invalid address format');
+        const exec = irysToExecLocal(irysAddress);
+        document.getElementById("exec_address_output").textContent = exec;
+        document.getElementById("exec_address_input").value = exec;
+
+    } catch (err) {
+        console.error(err);
+        alert("Invalid Irys address format.");
     }
 }
 
-// Auto-convert as user types
-document.getElementById('irys_address_input').addEventListener('input', convertAddress);
+// Auto convert when typing
+document.getElementById("irys_address_input").addEventListener("input", convertAddress);
+
+// Fake Irys generator still works fine
 </script>
 
-  <script>
-function generateFakeIrysAddress() {
-    const chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"; // base58
-    let addr = "";
-    for (let i = 0; i < 48; i++) { // Irys addresses ~48 chars
-        addr += chars[Math.floor(Math.random() * chars.length)];
-    }
-    document.getElementById("irys_address_input").value = addr;
-    convertAddress();
-}
-</script>
 
 </body>
 </html>
+
 
 
