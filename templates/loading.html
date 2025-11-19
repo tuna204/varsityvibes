@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Varsity Vibes Loading</title>
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background: #f8f9fa;
+            color: #333;
+        }
+
+        img.logo {
+            width: 150px;
+            margin-bottom: 20px;
+        }
+
+        .spinner {
+            border: 6px solid #e0e0e0;
+            border-top: 6px solid #0077ff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .tagline {
+            font-size: 16px;
+            color: #555;
+        }
+    </style>
+
+    <!-- Auto-redirect after 3 seconds -->
+    <script>
+        setTimeout(function() {
+            window.location.href = "/main";  // Change "/main" to your actual main app route
+        }, 3000);  // 3000ms = 3 seconds
+    </script>
+</head>
+<body>
+    <!-- IRYS Logo -->
+    <img src="{{ url_for('static', filename='irys_logo.png') }}" alt="IRYS Logo" class="logo">
+
+    <!-- Spinner -->
+    <div class="spinner"></div>
+
+    <!-- Tagline -->
+    <div class="tagline">Varsity Vibes x IRYS — Initializing your experience...</div>
+</body>
+</html>
