@@ -3,61 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Varsity Vibes Loading</title>
+    <title>Varsity Vibes</title>
     <style>
         body {
             margin: 0;
-            height: 100vh;
+            font-family: 'Arial', sans-serif;
             display: flex;
             flex-direction: column;
-            justify-content: center;
             align-items: center;
-            font-family: Arial, sans-serif;
-            background: #f8f9fa;
+            justify-content: center;
+            height: 100vh;
+            background: #f7f7f7;
             color: #333;
         }
-
-        img.logo {
+        .logo {
             width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+            animation: bounce 1.5s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+        .loader-text {
+            font-size: 1.2rem;
             margin-bottom: 20px;
         }
-
         .spinner {
-            border: 6px solid #e0e0e0;
-            border-top: 6px solid #0077ff;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #ff6b6b;
             border-radius: 50%;
             width: 50px;
             height: 50px;
             animation: spin 1s linear infinite;
-            margin-bottom: 15px;
         }
-
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-
-        .tagline {
-            font-size: 16px;
-            color: #555;
-        }
     </style>
-
-    <!-- Auto-redirect after 3 seconds -->
-    <script>
-        setTimeout(function() {
-            window.location.href = "/main";  // Change "/main" to your actual main app route
-        }, 3000);  // 3000ms = 3 seconds
-    </script>
 </head>
 <body>
-    <!-- IRYS Logo -->
-    <img src="{{ url_for('static', filename='irys_logo.png') }}" alt="IRYS Logo" class="logo">
-
-    <!-- Spinner -->
+    <img src="/static/irys_logo.png" alt="IRYS Logo" class="logo">
+    <div class="loader-text">Preparing Varsity Vibes...</div>
     <div class="spinner"></div>
 
-    <!-- Tagline -->
-    <div class="tagline">Varsity Vibes x IRYS — Initializing your experience...</div>
+    <script>
+        // Smooth redirect after 3 seconds
+        setTimeout(() => {
+            window.location.href = "/";  // Change to "/main" if using a main page
+        }, 3000);
+    </script>
 </body>
 </html>
