@@ -122,7 +122,6 @@
             </div>
             <div class="file-info">
                 <div><strong>IRYS Address:</strong> {{ file[2] }}</div>
-                <div><strong>Rule:</strong> {{ file[3] }}</div>
             </div>
 
             <form action="{{ url_for('download', filename=file[0]) }}" method="GET">
@@ -135,3 +134,4 @@
     {% endfor %}
 </body>
 </html>
+
