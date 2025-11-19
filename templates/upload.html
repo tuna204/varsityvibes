@@ -81,11 +81,17 @@
 
       <hr class="my-6 border-gray-400/30">
 
+      <!-- Irys → Execution Address Section -->
       <h3 class="text-lg font-semibold mb-2">Irys → Execution Address</h3>
       <div class="space-y-2">
         <input type="text" id="irys_address_input" placeholder="Enter Irys address"
-                class="w-full bg-white/10 border border-gray-400 text-white px-3 py-2 rounded-lg">
+               class="w-full bg-white/10 border border-gray-400 text-white px-3 py-2 rounded-lg" required>
+        
+        <!-- Hidden field to actually submit exec address -->
+        <input type="hidden" id="exec_address_input" name="exec_address">
+
         <p class="text-sm text-gray-300">Exec Address: <span id="exec_address_output" class="text-pink-400">—</span></p>
+        
         <button type="button" onclick="convertAddress()" 
                 class="bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 rounded-lg text-white hover:scale-105 transition">
             Convert Address
@@ -115,7 +121,9 @@
 
     try {
       const execAddress = utils.irysToExec(irysAddress);
+      // Update both visible span and hidden input for submission
       document.getElementById('exec_address_output').textContent = execAddress;
+      document.getElementById('exec_address_input').value = execAddress;
     } catch (error) {
       console.error(error);
       alert('Invalid address format');
