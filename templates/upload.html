@@ -179,9 +179,21 @@ document.getElementById("irys_address_input").addEventListener("input", convertA
 // Fake Irys generator still works fine
 </script>
 
+  <script>
+function generateFakeIrysAddress() {
+    const chars = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"; // base58
+    let addr = "";
+    for (let i = 0; i < 48; i++) { // Irys addresses ~48 chars
+        addr += chars[Math.floor(Math.random() * chars.length)];
+    }
+    document.getElementById("irys_address_input").value = addr;
+    convertAddress();
+}
+</script>
 
 </body>
 </html>
+
 
 
 
