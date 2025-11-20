@@ -1,59 +1,100 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Varsity Vibes</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background: #f7f7f7;
-            color: #333;
-        }
-        .logo {
-            width: 150px;
-            height: auto;
-            margin-bottom: 20px;
-            animation: bounce 1.5s infinite;
-        }
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
-        }
-        .loader-text {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-        }
-        .spinner {
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #ff6b6b;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Varsity Vibes | Launching...</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+      color: #fff;
+      text-align: center;
+    }
+
+    .logo {
+      width: 150px;
+      height: auto;
+      margin-bottom: 20px;
+      animation: bounce 1.5s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+
+    .loader-text {
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+    }
+
+    .progress-bar {
+      width: 80%;
+      height: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, #ff6b6b, #f0a500);
+      border-radius: 5px;
+      transition: width 0.2s ease;
+    }
+
+    .spinner {
+      border: 5px solid rgba(255, 255, 255, 0.2);
+      border-top: 5px solid #ff6b6b;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
 </head>
 <body>
-    <img src="/static/irys_logo.png" alt="IRYS Logo" class="logo">
-    <div class="loader-text">Preparing Varsity Vibes...</div>
-    <div class="spinner"></div>
+  <img src="/static/irys_logo.png" alt="IRYS Logo" class="logo">
+  <div class="loader-text">Launching Varsity Vibes...</div>
+  <div class="spinner"></div>
+  <div class="progress-bar">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+  <div class="loader-text" style="font-size:1rem;">Preparing your permanent file storage experience...</div>
 
-    <script>
-        // Smooth redirect after 3 seconds
-        setTimeout(() => {
-            window.location.href = "/";  // Change to "/main" if using a main page
-        }, 3000);
-    </script>
+  <script>
+    const progressFill = document.getElementById("progressFill");
+    let width = 0;
+
+    function incrementProgress() {
+      if(width < 100){
+        width += Math.random() * 5; // random increment for realism
+        if(width > 100) width = 100;
+        progressFill.style.width = width + "%";
+        setTimeout(incrementProgress, 300);
+      } else {
+        // Redirect to main portal
+        window.location.href = "/";
+      }
+    }
+
+    // Start progress on page load
+    incrementProgress();
+  </script>
 </body>
 </html>
